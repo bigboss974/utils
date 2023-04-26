@@ -1,8 +1,12 @@
-// #include "list.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "list.h"
 
 /*
         Front ==> NULL <- el1 -> el2 -> el3-> NULL <== Back
+                          ^              ^
                          /|\            /|\
                           |              |
                         First           Last
@@ -17,8 +21,8 @@
 */
 void l_init(t_list *l)
 {
-    l->first = NULL;
-    l->last = NULL;
+    l->first = NULL;    // head
+    l->last = NULL;    // tail
 }
 
 
@@ -94,7 +98,7 @@ void l_push_front(t_list *l, void *data, size_t size)
 
 /*
 **================= l_pop_back ========================
-** Ajoute un élement data de taille size en fin de liste
+** Retire un élement data de taille size en fin de liste
 */
 void *l_pop_back(t_list *l)
 {
@@ -115,10 +119,9 @@ void *l_pop_back(t_list *l)
     return val;
 }
 
-
 /*
 **================= l_pop_front ========================
-** Ajoute un élement data de taille size en début de liste
+** Retire un élement data de taille size en début de liste
 */
 void *l_pop_front(t_list *l)
 {
@@ -146,59 +149,15 @@ void *l_pop_front(t_list *l)
 void l_clear(t_list *l)
 {
     t_element *pelem = l->first;
+    t_element *tmp = NULL;
     while (pelem)
     {
-        pelem = pelem->next;
+        tmp = pelem->next;
+        free (pelem->data);
+        free(pelem);
+        pelem = tmp;
     }
-}
-
-/*
-**================= l_view_struct (l_line) ========================
-** Affiche la file  data est une structuer(exemple a modifier en fonction des besoins (cast))
-*/
-void l_view_line(t_list *q)
-{
-    t_line *ptr = (t_line *)malloc(sizeof(t_line));
-
-    if (q == NULL || ptr == NULL)
-    {
-        printf("l_view_line () : Erreur allocation\n");
-        exit(EXIT_FAILURE);
-    }
-    t_element *element = q->first;
-    while (element != NULL)
-    {
-        ptr = (t_line *)element->data;
-        printf("[%s]\n", ptr->line);
-       
-        element = element->next;
-    } // while
-}
-
-
-/*
-**================= l_view_link(l_link) ========================
-** Affiche la file  data est une structuer(exemple a modifier en fonction des besoins (cast))
-*/
-void l_view_link(t_list *q)
-{
-    t_link *ptr = (t_link *)malloc(sizeof(t_link));
-
-    if (ptr == NULL)
-    {
-        printf("l_view_link () : Erreur allocation\n");
-        exit(EXIT_FAILURE);
-    }
-    t_element *element = q->first;
-
-    while (element != NULL)
-    {
-        ptr = (t_link *)element->data;
-        printf("room [%d] => room [%d]\n", ptr->id_room1, ptr->id_room2);
-        element = element->next;
-
-    } // while
-
+    free (tmp);
 }
 
 /*
@@ -210,10 +169,47 @@ void l_view(t_list *l)
     t_element *pelem = l->first;
     while (pelem)
     {
-        printf("elem : [%s]\n", (char *)pelem->data);
+        printf("elem : [%d]\n", *(int *)pelem->data);
         pelem = pelem->next;
     }
 }
+
+/*
+**================= l_get_first ========================
+ Recupère le data du premier element de la liste
+**/
+void *l_get_first(t_list *l)
+{
+    void *val;
+    t_element *tmp = l->first;
+
+    if (!tmp)
+        return NULL;
+
+    val = tmp->data;
+    return val;
+}
+
+/*
+**================= l_get_last ========================
+ Recupère le data du dernier element de la liste
+*/
+void *l_get_last(t_list *l)
+{
+    void *val;
+    t_element *tmp = l->last;
+
+    if (!tmp)
+        return NULL;
+
+    val = tmp->data;
+
+    return val;
+}
+
+
+
+
 
 /*
 **================= l_view_struct  (l_room)========================
@@ -238,68 +234,6 @@ void l_view_struct(t_list *q)
                 ptr->id, ptr->name, ptr->x, ptr->y, ptr->empty, r[ptr->type]);
         
         element = element->next;
-    } // while
-}
-*/
-
-/*
-**================= l_get_first ========================
- Recupère le data du premier element de la liste
-**/
-void *l_get_first(t_list *l)
-{
-    void *val;
-    t_element *tmp = l->first;
-
-    if (!tmp)
-        return NULL;
-
-    val = tmp->data;
-
-    // free(tmp);
-    return val;
-}
-
-/*
-**================= l_get_last ========================
- Recupère le data du dernier element de la liste
-*/
-void *l_get_last(t_list *l)
-{
-    void *val;
-    t_element *tmp = l->last;
-
-    if (!tmp)
-        return NULL;
-
-    val = tmp->data;
-
-    //free(tmp);
-    return val;
-}
-
-
-
-
-//=====================================
-
-/*
-void l_view_node(t_list *q)
-{
-    t_node *ptr = (t_node *)malloc(sizeof(t_node));
-    if (ptr == NULL)
-    {
-        printf("l_view_node () : Erreur allocation\n");
-        exit(EXIT_FAILURE);
-    }
-    t_element *element = q->first;
-
-    while (element != NULL)
-    {
-        ptr = (t_node *)element->data;
-        printf("Vertex : [%d] \n", ptr->vertex);
-        element = element->next;
-
     } // while
 }
 */
